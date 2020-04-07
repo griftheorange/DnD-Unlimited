@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerMovementGrid : MonoBehaviour
 {
-    public float moveSpeed = 5f;
+    public float moveSpeed = 0.1f;
     public Transform movePoint;
     public Animator animator;
 
@@ -44,14 +44,14 @@ public class PlayerMovementGrid : MonoBehaviour
         float distance = Vector3.Distance(transform.position, refPosition);
         if(distance != 0){
             animator.SetFloat("Speed", moveSpeed);
-            if(transform.position.x - refPosition.x != 0){
+            if(Mathf.Abs(transform.position.x - refPosition.x) > Mathf.Abs(transform.position.y - refPosition.y)){
                 if(transform.position.x - refPosition.x < 0){
                     animator.SetFloat("Horizontal", 1f);
                 } else {
                     animator.SetFloat("Horizontal", -1f);
                 }
                 animator.SetFloat("Vertical", 0f);
-            } else if(transform.position.y - refPosition.y != 0){
+            } else {
                 if(transform.position.y - refPosition.y < 0){
                     animator.SetFloat("Vertical", 1f);
                 } else {
