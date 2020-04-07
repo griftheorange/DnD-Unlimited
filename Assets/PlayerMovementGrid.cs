@@ -19,24 +19,49 @@ public class PlayerMovementGrid : MonoBehaviour
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
+        Vector3 refPosition = new Vector3(movePoint.position.x, movePoint.position.y+0.5f, movePoint.position.z);
+        transform.position = Vector3.MoveTowards(transform.position, refPosition, moveSpeed * Time.deltaTime);
+        float distance = AnimationHandler(horizontal, vertical, transform, refPosition);
+        MovementHandler(horizontal, vertical, distance);
+    }
 
-        transform.position = Vector3.MoveTowards(transform.position, movePoint.position, moveSpeed * Time.deltaTime);
+    void MovementHandler(float horizontal, float vertical, float distance)
+    {
+        if(distance <= 0.05f)
+                {
+                    if(Mathf.Abs(horizontal) == 1f)
+                    {
+                        movePoint.position += new Vector3(horizontal, 0f, 0f);
+                    } else if(Mathf.Abs(vertical) == 1f)
+                    {
+                        movePoint.position += new Vector3(0f, vertical, 0f);
+                    }
+                }
+    }
 
-        if(Vector3.Distance(transform.position, movePoint.position) <= 0.05f)
-        {
-            animator.SetFloat("Speed", 0);
-            if(Mathf.Abs(horizontal) == 1f)
-            {
-                animator.SetFloat("Horizontal", horizontal);
-                movePoint.position += new Vector3(horizontal, 0f, 0f);
-            } else if(Mathf.Abs(vertical) == 1f)
-            {
-                animator.SetFloat("Vertical", vertical);
-                movePoint.position += new Vector3(0f, vertical, 0f);
-            }
-        } else
-        {
+    float AnimationHandler(float horizontal, float vertical, Transform transform, Vector3 refPosition)
+    {
+        float distance = Vector3.Distance(transform.position, refPosition);
+        if(distance != 0){
             animator.SetFloat("Speed", moveSpeed);
+            if(transform.position.x - refPosition.x != 0){
+                if(transform.position.x - refPosition.x < 0){
+                    animator.SetFloat("Horizontal", 1f);
+                } else {
+                    animator.SetFloat("Horizontal", -1f);
+                }
+                animator.SetFloat("Vertical", 0f);
+            } else if(transform.position.y - refPosition.y != 0){
+                if(transform.position.y - refPosition.y < 0){
+                    animator.SetFloat("Vertical", 1f);
+                } else {
+                    animator.SetFloat("Vertical", -1f);
+                }
+                animator.SetFloat("Horizontal", 0f);
+            }
+        } else {
+            animator.SetFloat("Speed", 0);
         }
+        return distance;
     }
 }
